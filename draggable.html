@@ -1,0 +1,288 @@
+<html lang="en">
+  <head>
+    <title>Basic Drag and Drop</title>
+    <style>
+      .dragging {
+        opacity: 0.5;
+        border: 2px dashed green;
+      }
+
+      .hovered {
+        background-color: lightblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="page" style="width: 100vh; height: 100vh">
+      <h1>Put the right hat on the right person</h1>
+
+      <div>
+        <h4>Score: <span id="score">0</span></h4>
+      </div>
+      <div
+        id="hatContainer"
+        style="
+          width: 100vw;
+          height: 200px;
+          background-color: #f0f0f0;
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+        "
+        ondragover="handleDragOver(event)"
+        ondragleave="handleDragLeave(event)"
+        ondrop="handleDrop(event)"
+      >
+        <div
+          id="hat1"
+          draggable="true"
+          style="
+            width: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          ondragstart="handleDragStart(event)"
+          ondragend="{
+            event.target.classList.remove('dragging');
+            console.log('dragging hat 1 ended');
+          }"
+        >
+          <img src="hardhat.png" alt="Hard Hat" height="100" />
+        </div>
+        <div
+          id="hat2"
+          draggable="true"
+          style="
+            width: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          ondragstart="handleDragStart(event)"
+          ondragend="{
+            event.target.classList.remove('dragging');
+          }"
+        >
+          <img
+            src="firefighter_helmet.png"
+            alt="Firefighter Helmet"
+            style="height: 50px; margin-top: 15px"
+          />
+        </div>
+        <div
+          id="hat3"
+          draggable="true"
+          style="
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          ondragstart="handleDragStart(event)"
+          ondragend="{
+            event.target.classList.remove('dragging');
+          }"
+        >
+          <img
+            src="cowboy_hat.png"
+            alt="Cowboy Hat"
+            height="150"
+            style="margin-top: -35px"
+          />
+        </div>
+        <div
+          id="hat4"
+          draggable="true"
+          style="
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          ondragstart="handleDragStart(event)"
+          ondragend="{
+            event.target.classList.remove('dragging');
+          }"
+        >
+          <img
+            src="witches_hat.png"
+            alt="Witch's Hat"
+            height="100"
+            style="margin-top: -50px"
+          />
+        </div>
+      </div>
+
+      <div
+        id="peopleContainer"
+        style="display: flex; flex-direction: row; gap: 10px; margin-top: 20px"
+      >
+        <div
+          id="constructionWorker"
+          style="
+            width: 200px;
+            height: 400px;
+            border: 1px solid orange;
+            background: url('construction_worker.png') no-repeat center center;
+            background-size: contain;
+          "
+          ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)"
+          ondrop="handleDrop(event)"
+        ></div>
+        <div
+          id="firefighter"
+          style="
+            width: 200px;
+            height: 400px;
+            border: 1px solid red;
+            background: url('firefighter.png') no-repeat center center;
+            background-size: contain;
+          "
+          ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)"
+          ondrop="handleDrop(event)"
+        ></div>
+        <div
+          id="witch"
+          style="
+            width: 200px;
+            height: 400px;
+            border: 1px solid blue;
+            background: url('witch.png') no-repeat center center;
+            background-size: contain;
+          "
+          ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)"
+          ondrop="handleDrop(event)"
+        ></div>
+        <div
+          id="cowboy"
+          style="
+            width: 200px;
+            height: 400px;
+            border: 1px solid brown;
+            background: url('cowboy.png') no-repeat center center;
+            background-size: contain;
+          "
+          ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)"
+          ondrop="handleDrop(event)"
+        ></div>
+      </div>
+      <div style="display: flex; justify-content: center; margin-top: 20px">
+        <button id="resetButton" onclick="reset()">Reset</button>
+      </div>
+    </div>
+    <script>
+      let score = 0;
+      reset();
+      function handleDragStart(event) {
+        const draggedElement = event.target.closest('[draggable="true"]');
+        console.log("dragging ", draggedElement.id);
+        event.dataTransfer.setData("text/plain", draggedElement.id);
+        event.dataTransfer.dropEffect = "move";
+        event.target.classList.add("dragging");
+      }
+      function handleDragOver(event) {
+        event.preventDefault();
+        event.target.classList.add("hovered");
+        event.dataTransfer.dropEffect = "move";
+      }
+      function handleDragLeave(event) {
+        event.target.classList.remove("hovered");
+      }
+      function handleDrop(event) {
+        event.preventDefault();
+        console.log("dropping ", event.target.id);
+        event.target.classList.remove("hovered");
+        const id = event.dataTransfer.getData("text/plain");
+        const draggable = document.getElementById(id);
+        if (
+          event.target.id === "constructionWorker" ||
+          event.target.id === "firefighter" ||
+          event.target.id === "witch" ||
+          event.target.id === "cowboy"
+        ) {
+          event.target.appendChild(draggable);
+        }
+        if (
+          event.target.id === "hatContainer" ||
+          event.target.parentElement.id === "hatContainer" ||
+          event.target.parentElement.parentElement.id === "hatContainer"
+        ) {
+          const hatContainer = document.getElementById("hatContainer");
+          console.log("dropping in hat container");
+          hatContainer.appendChild(draggable);
+          return;
+        }
+
+        if (id === "hat1" && event.target.id === "constructionWorker") {
+          score++;
+        } else if (id === "hat2" && event.target.id === "firefighter") {
+          score++;
+        } else if (id === "hat3" && event.target.id === "cowboy") {
+          score++;
+        } else if (id === "hat4" && event.target.id === "witch") {
+          score++;
+        } else {
+          score--;
+
+          // Show epic fail image for 2 seconds
+          const epicFail = document.createElement("img");
+          epicFail.src = "epic_fail.png";
+          epicFail.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            object-fit: cover;
+          `;
+          document.body.appendChild(epicFail);
+
+          setTimeout(() => {
+            document.body.removeChild(epicFail);
+          }, 2000);
+        }
+
+        document.getElementById("score").innerHTML = score;
+      }
+      function reset() {
+        const hatContainer = document.getElementById("hatContainer");
+        const hat1 = document.getElementById("hat1");
+        const hat2 = document.getElementById("hat2");
+        const hat3 = document.getElementById("hat3");
+        const hat4 = document.getElementById("hat4");
+        const constructionWorker =
+          document.getElementById("constructionWorker");
+        const firefighter = document.getElementById("firefighter");
+        const witch = document.getElementById("witch");
+        const cowboy = document.getElementById("cowboy");
+        const hats = [hat1, hat2, hat3, hat4];
+        const people = [constructionWorker, firefighter, witch, cowboy];
+
+        // Shuffle arrays
+        for (let i = hats.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [hats[i], hats[j]] = [hats[j], hats[i]];
+        }
+
+        for (let i = people.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [people[i], people[j]] = [people[j], people[i]];
+        }
+
+        // Append in random order
+        hats.forEach((hat) => hatContainer.appendChild(hat));
+        people.forEach((person) => peopleContainer.appendChild(person));
+        score = 0;
+        document.getElementById("score").innerHTML = score;
+      }
+    </script>
+  </body>
+</html>
